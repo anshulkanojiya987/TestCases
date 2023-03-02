@@ -88,7 +88,7 @@ namespace BionicAppTestRunner.BionicAppUi
                 p.Add(x => x.Align, Align.Center)
              //   .Add(x => x.Typo, "Typo.h6")
             );
-            
+            Assert.Equal(Align.Center, language.Instance.Align);
         }
 
 
