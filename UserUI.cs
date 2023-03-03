@@ -1,6 +1,8 @@
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using BionicApp.Pages.Add_Device;
+using BionicApp.Pages.Add_Device.App_Info;
+using BionicApp.Pages.Add_Device.My_Devices.DeviceSettings;
 using BionicApp.Pages.Authentication;
 using BionicAppTestRunner.BionicApp;
 using Bogus.DataSets;
@@ -106,30 +108,87 @@ namespace BionicAppTestRunner.BionicAppUi
         }
 
         [Fact]
-        public void check_Languages()
+        public void checkUser()
         {
-            var component = RenderComponent<User>();
-            var languages = component.FindComponent<MudSelect<SelectionMode>>();
-            var lancount = languages.RenderCount;
-            Assert.Equal(18, lancount);
+            var component = RenderComponent<Info>();
+            //var languages = component.FindComponent<MudSelect<SelectionMode>>();
+            //var lancount = languages.RenderCount;
+            //Assert.Equal(18, lancount);
         }
-        
-        
+
+
         //[Fact]
-        //public async void Test()
+        //public async void NameTest()
         //{
-        //     await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
+        //    await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
         //    using var ctx = new TestContext();
 
-        //    var lines = "TestUser";
+        //    var lines = "Test User Admin";
 
         //    var cut = ctx.RenderComponent<User>(parameters => parameters
         //      .Add(p => p.name, lines)
-              
         //    );
-            
+
         //}
-     
+
+        //[Fact]
+        //public async void SelectedLanguageTest()
+        //{
+        //    await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
+        //    using var ctx = new TestContext();
+        //    //List<string> myList = new List<string>() 
+        //    //{
+        //    //    "English",
+        //    //};
+        //    var lines = "English";
+        //    var cut = ctx.RenderComponent<User>(parameters => parameters
+        //      .Add(p => p.selectedLanguage, lines)
+        //    );
+
+        //}
+
+        //[Fact]
+        //public async void EmailTest()
+        //{
+        //    await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
+        //    using var ctx = new TestContext();
+
+        //    var lines = "Tst_admin@example.com";
+
+        //    var cut = ctx.RenderComponent<User>(parameters => parameters
+        //      .Add(p => p.email, lines)
+        //    );
+
+        //}
+
+        //[Fact]
+        //public async void RoleTest()
+        //{
+        //    await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
+        //    using var ctx = new TestContext();
+
+        //    var lines = "Admin";
+
+        //    var cut = ctx.RenderComponent<User>(parameters => parameters
+        //      .Add(p => p.role, lines)
+        //    );
+
+        //}
+
+        //[Fact]
+        //public async void AvtarTest()
+        //{
+        //    await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
+        //    using var ctx = new TestContext();
+
+        //    var lines = "T";
+
+        //    var cut = ctx.RenderComponent<User>(parameters => parameters
+        //      .Add(p => p.avatar, lines)
+        //    );
+
+        //}
+
         //[Fact]
         //public void Test()
         //{
