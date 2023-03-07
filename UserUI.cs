@@ -1,13 +1,8 @@
-using AngleSharp.Css.Dom;
-using AngleSharp.Dom;
+
 using BionicApp.Pages.Add_Device;
-using BionicApp.Pages.Add_Device.App_Info;
-using BionicApp.Pages.Add_Device.My_Devices.DeviceSettings;
-using BionicApp.Pages.Authentication;
-using BionicAppTestRunner.BionicApp;
-using Bogus.DataSets;
+using Moq;
 using Bunit;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.JSInterop;
 using MudBlazor;
 using Ossur.Bionics.Common;
 using System;
@@ -20,31 +15,60 @@ using System.Xml.Linq;
 using Xunit;
 using static MudBlazor.CategoryTypes;
 using static MudBlazor.FilterOperator;
+using FluentAssertions.Common;
+using System.Diagnostics.Metrics;
+using Microsoft.AspNetCore.Components;
 
 namespace BionicAppTestRunner.BionicAppUi
 {
-    public class UserUI : BionicAppUiTestBase 
+    public class UserUI : BionicAppUiTestBase
     {
         [Fact]
         public void AllFields_AreDisplayed()
         {
             var component = RenderComponent<User>();
-            //var nameText = component.FindComponent<MudField>();
-            //var emailText = component.FindComponent<MudField>();
-            var logOutButton = component.FindAll("button").FirstOrDefault(b => b.TextContent == "Log out");
-            //Assert.NotNull(nameText);
-            //Assert.NotNull(emailText);
+            var nameText = component.FindComponents<MudField>();
+            var emailText = component.FindComponent<MudField>();
+            var logOutButton = component.FindComponent<MudButton>();
+            Assert.NotNull(nameText);
+            Assert.NotNull(emailText);
             Assert.NotNull(logOutButton);
         }
-       
-       
+        [Fact]
+        public void checkmainStackPro()
+        {
+            var component = RenderComponent<User>();
+            var mudStack = component.FindComponent<MudStack>();
+            Assert.Equal("ma-2 pa-3 stackLayout", mudStack.Instance.Class);
+        }
+
+        [Fact]
+        public void check1stMudstackProperty()
+        {
+            var component = RenderComponent<User>();
+            var Stack = component.FindComponent<MudStack>();
+            var firstStack = Stack.FindComponent<MudStack>();
+            Assert.Equal(AlignItems.Center, firstStack.Instance.AlignItems);
+            Assert.Equal(Justify.Center, firstStack.Instance.Justify);
+            Assert.Equal(2, firstStack.Instance.Spacing);
+        }
+        [Fact]
+        public void checkMudTextin1stmudStack()
+        {
+            var component = RenderComponent<User>();
+            var Stack = component.FindComponent<MudStack>();
+            var firstStack = Stack.FindComponent<MudStack>();
+            var mudText = firstStack.FindComponent<MudText>();
+            Assert.Equal(Align.Center, mudText.Instance.Align);
+            Assert.Equal(Typo.h6, mudText.Instance.Typo);
+            mudText.Find("b").MarkupMatches("<b>user_ua</b>");
+
+        }
         [Fact]
         public void checkMudAvtar()
         {
-            var avtar = RenderComponent<MudAvatar>(p =>
-                p.Add(x => x.Color, MudBlazor.Color.Primary)
-                 .Add(x => x.Size, MudBlazor.Size.Large)
-            );
+            var component = RenderComponent<User>();
+            var avtar = component.FindComponent<MudAvatar>();
             Assert.NotNull(avtar);
             Assert.Equal(MudBlazor.Color.Primary, avtar.Instance.Color);
             Assert.Equal(MudBlazor.Size.Large, avtar.Instance.Size);
@@ -53,11 +77,10 @@ namespace BionicAppTestRunner.BionicAppUi
         [Fact]
         public void checkNameMudField()
         {
-            var name = RenderComponent<MudField>(p =>
-                p.Add(x => x.Label, "Name")
-            );
+            var component = RenderComponent<User>();
+            var name = component.FindComponent<MudField>();
+            Assert.Equal("name_ua", name.Instance.Label);
             Assert.NotNull(name.Instance.Label);
-            Assert.Equal("Name", name.Instance.Label);
             Assert.Equal(Variant.Text, name.Instance.Variant);
         }
 
@@ -68,7 +91,7 @@ namespace BionicAppTestRunner.BionicAppUi
                 p.Add(x => x.Label, "Email")
             );
             Assert.NotNull(email.Instance.Label);
-            Assert.Equal("Name", email.Instance.Label);
+            Assert.Equal("Email", email.Instance.Label);
             Assert.Equal(Variant.Text, email.Instance.Variant);
         }
 
@@ -83,125 +106,108 @@ namespace BionicAppTestRunner.BionicAppUi
             Assert.Equal(Variant.Text, role.Instance.Variant);
         }
 
-        [Fact]
-        public void checkLanguageMudText()
-        {
-            var language = RenderComponent<MudText>(p =>
-                p.Add(x => x.Align, Align.Center)
-             //   .Add(x => x.Typo, "Typo.h6")
-            );
-            Assert.Equal(Align.Center, language.Instance.Align);
-        }
+       
 
 
         [Fact]
-        public void checkLogoutButton() 
+        public void checkLogoutButtonProperty() 
         {
-            // Arrange
-            var LogoutButton = RenderComponent<MudButton>(p =>
-                p.Add(x => x.Style, "height:52px; text-transform:none;")
-                .Add(x => x.Color, MudBlazor.Color.Primary)
-            );
+            var component = RenderComponent<User>();
+            var LogoutButton = component.FindComponent<MudButton>();
             Assert.NotNull(LogoutButton);
             Assert.Equal(MudBlazor.Color.Primary,LogoutButton.Instance.Color);
             Assert.Equal("height:52px; text-transform:none;", LogoutButton.Instance.Style);
         }
 
         [Fact]
-        public void checkUser()
+        public async void checkMudSelect()
         {
-            var component = RenderComponent<Info>();
-            //var languages = component.FindComponent<MudSelect<SelectionMode>>();
-            //var lancount = languages.RenderCount;
-            //Assert.Equal(18, lancount);
+            await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
+            const string key = "TranslationCutoffDate";
+            var cutoff = Manager.Instance.GetValue(key, System.DateTime.MinValue);
+            await Manager.Instance.CloudSync.PullTranslationsFromCloud(cutoff, 1, 1000, "en", "USERAPP_V1.0");
+            Manager.Instance.GetSupportedLanguages();
+            var component = RenderComponent<User>();
+            var LanSelect = component.FindComponent<MudSelect<string>>();
+            Assert.NotNull(LanSelect);
+            Assert.False(LanSelect.Instance.MultiSelection);
+            Assert.Equal(Variant.Outlined, LanSelect.Instance.Variant);
+            Assert.Equal(Origin.BottomCenter, LanSelect.Instance.AnchorOrigin);
+            Assert.False(LanSelect.Instance.MultiSelection);
+            Assert.Equal("English", LanSelect.Instance.Value);
         }
 
 
-        //[Fact]
-        //public async void NameTest()
-        //{
-        //    await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
-        //    using var ctx = new TestContext();
 
-        //    var lines = "Test User Admin";
-
-        //    var cut = ctx.RenderComponent<User>(parameters => parameters
-        //      .Add(p => p.name, lines)
-        //    );
-
-        //}
-
-        //[Fact]
-        //public async void SelectedLanguageTest()
-        //{
-        //    await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
-        //    using var ctx = new TestContext();
-        //    //List<string> myList = new List<string>() 
-        //    //{
-        //    //    "English",
-        //    //};
-        //    var lines = "English";
-        //    var cut = ctx.RenderComponent<User>(parameters => parameters
-        //      .Add(p => p.selectedLanguage, lines)
-        //    );
-
-        //}
-
-        //[Fact]
-        //public async void EmailTest()
-        //{
-        //    await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
-        //    using var ctx = new TestContext();
-
-        //    var lines = "Tst_admin@example.com";
-
-        //    var cut = ctx.RenderComponent<User>(parameters => parameters
-        //      .Add(p => p.email, lines)
-        //    );
-
-        //}
-
-        //[Fact]
-        //public async void RoleTest()
-        //{
-        //    await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
-        //    using var ctx = new TestContext();
-
-        //    var lines = "Admin";
-
-        //    var cut = ctx.RenderComponent<User>(parameters => parameters
-        //      .Add(p => p.role, lines)
-        //    );
-
-        //}
-
-        //[Fact]
-        //public async void AvtarTest()
-        //{
-        //    await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
-        //    using var ctx = new TestContext();
-
-        //    var lines = "T";
-
-        //    var cut = ctx.RenderComponent<User>(parameters => parameters
-        //      .Add(p => p.avatar, lines)
-        //    );
-
-        //}
-
-        //[Fact]
-        //public void Test()
-        //{
-        //    using var ctx = new TestContext();
-
-        //    var cut = ctx.RenderComponent<User>(parameters => parameters
-        //      .Add<Alert>(p => p.Content, alertParameters => alertParameters
-        //        .Add(p => p.name, "Alert heading")
-
-        //      )
-        //    );
-        //}
+        [Fact]
+        public async void NameTest()
+        {
+            await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
+            var component = RenderComponent<User>();
+            var mudfield = component.FindComponent<MudField>();
+            var mudtext = mudfield.FindComponent<MudText>();
+            mudtext.Find("p").MarkupMatches("<p class=\"mud-typography mud-typography-body2\">Test User Admin</p>");
+        }
 
 
+        [Fact]
+        public void EmailTest()
+        {
+            var component = RenderComponent<MudText>(parameters => parameters
+               .Add(p => p.Typo, Typo.body2)
+               .AddChildContent("@email")
+           );
+
+            var header = component.Find("body2");
+            Assert.NotNull(header);
+            Assert.Equal("@email", header.InnerHtml);
+
+        }
+
+        [Fact]
+        public void RoleTest()
+        {
+            var component = RenderComponent<MudText>(parameters => parameters
+               .Add(p => p.Typo, Typo.body2)
+               .AddChildContent("@role")
+           );
+
+            var header = component.Find("body2");
+            Assert.NotNull(header);
+            Assert.Equal("@role", header.InnerHtml);
+
+        }
+
+        [Fact]
+        public void AvtarTest()
+        {
+            var component = RenderComponent<MudText>(parameters => parameters
+               .Add(p => p.Typo, Typo.body2)
+               .AddChildContent("@avatar")
+           );
+
+            var header = component.Find("body2");
+            Assert.NotNull(header);
+            Assert.Equal("@avatar", header.InnerHtml);
+
+        }
+        [Fact]
+        public void CheckButtonNevigation()
+        {
+            var component = RenderComponent<User>();
+            var nav = component.Services.GetRequiredService<NavigationManager>();
+            var button = component.FindComponent<MudButton>();
+            var buttonclick = button.Instance.OnClick;
+            Assert.Equal("/", nav.Uri);
+        }
+        [Fact]
+
+        public async void CheckMudSelectItem()
+        {
+            await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
+            var component = RenderComponent<User>();
+            var mudselit = component.FindComponent<MudSelectItem<string>>();
+            Assert.Equal("english", mudselit.Instance.Value);
+        }
     }
 }
