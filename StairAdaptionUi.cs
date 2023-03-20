@@ -1,4 +1,5 @@
-﻿using BionicApp.Pages.Add_Device.My_Devices.DeviceSettings;
+using BionicApp.Pages.Add_Device.My_Devices.DeviceProfiles;
+using BionicApp.Pages.Add_Device.My_Devices.DeviceSettings;
 using Bunit;
 using MudBlazor;
 using Ossur.Bionics.Common;
@@ -35,7 +36,7 @@ namespace BionicAppTestRunner.BionicAppUi
             Assert.Equal("pa-2", mudText.Instance.Class);
             Assert.Equal(Align.Center, mudText.Instance.Align);
             Assert.Equal(Typo.h6, mudText.Instance.Typo);
-            mudText.MarkupMatches("");
+            mudText.MarkupMatches("<h6 class=\"mud-typography mud-typography-h6 mud-typography-align-center pa-2\">Stair Adaption</h6>");
         }
         [Fact]
         public void CheckImage()
@@ -63,23 +64,76 @@ namespace BionicAppTestRunner.BionicAppUi
             var component = RenderComponent<StairAdaption>();
             var mudStack = component.FindComponent<MudStack>();
             var innerStack = mudStack.FindComponent<MudStack>();
-            Assert.Equal(0, innerStack.Instance.Spacing);
+            Assert.Equal(1, innerStack.Instance.Spacing);
             var mudText = innerStack.FindComponent<MudText>();
             Assert.Equal(Typo.h6, mudText.Instance.Typo);
-            mudText.MarkupMatches("");
+            mudText.MarkupMatches("<h6 class=\"mud-typography mud-typography-h6\">Decent Angle</h6>");
             var Stackinner = innerStack.FindComponent<MudStack>();
             Assert.Equal(2, Stackinner.Instance.Spacing);
-            Assert.Equal(Justify.SpaceBetween,Stackinner.Instance.Justify);
+            Assert.Equal(Justify.SpaceBetween, Stackinner.Instance.Justify);
             Assert.Equal(AlignItems.Center, Stackinner.Instance.AlignItems);
             Assert.True(Stackinner.Instance.Row);
             var Slider = Stackinner.FindComponent<MudSlider<double>>();
             Assert.True(Slider.Instance.Disabled);
             Assert.Equal(0, Slider.Instance.Value);
             Assert.False(Slider.Instance.Immediate);
-            Assert.Equal(0,Slider.Instance.Min);
+            Assert.Equal(0, Slider.Instance.Min);
             Assert.Equal(6.0, Slider.Instance.Max);
             Assert.Equal(1, Slider.Instance.Step);
             Assert.Equal(MudBlazor.Size.Medium, Slider.Instance.Size);
+            var text = Stackinner.FindComponent<MudText>();
+            Assert.Equal(Typo.subtitle1, text.Instance.Typo);
+            text.MarkupMatches("<h6 class=\"mud-typography mud-typography-subtitle1\">0°</h6>");
+        }
+        [Fact]
+        public async void CheckAscentTextSlider()
+        {
+            await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
+            const string key = "TranslationCutoffDate";
+            var cutoff = Manager.Instance.GetValue(key, DateTime.MinValue);
+            await Manager.Instance.CloudSync.PullTranslationsFromCloud(cutoff, 1, 1000, "en", "USERAPP_V1.0");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en");
+            mydevicemethod2();
+            var component = RenderComponent<StairAdaption>();
+            var mudStack = component.FindComponent<MudStack>();
+            var innerStack = mudStack.FindComponents<MudStack>()[2];
+            Assert.Equal(1, innerStack.Instance.Spacing);
+            var mudText = innerStack.FindComponent<MudText>();
+            Assert.Equal(Typo.h6, mudText.Instance.Typo);
+            mudText.MarkupMatches("<h6 class=\"mud-typography mud-typography-h6\">Ascent Angle</h6>");
+            var Stackinner = innerStack.FindComponent<MudStack>();
+            Assert.Equal(2, Stackinner.Instance.Spacing);
+            Assert.Equal(Justify.SpaceBetween, Stackinner.Instance.Justify);
+            Assert.Equal(AlignItems.Center, Stackinner.Instance.AlignItems);
+            Assert.True(Stackinner.Instance.Row);
+            var Slider = Stackinner.FindComponent<MudSlider<double>>();
+            Assert.True(Slider.Instance.Disabled);
+            Assert.Equal(0, Slider.Instance.Value);
+            Assert.False(Slider.Instance.Immediate);
+            Assert.Equal(0, Slider.Instance.Min);
+            Assert.Equal(6.0, Slider.Instance.Max);
+            Assert.Equal(1, Slider.Instance.Step);
+            Assert.Equal(MudBlazor.Size.Medium, Slider.Instance.Size);
+            var text = Stackinner.FindComponent<MudText>();
+            Assert.Equal(Typo.subtitle1, text.Instance.Typo);
+            text.MarkupMatches("<h6 class=\"mud-typography mud-typography-subtitle1\">0°</h6>");
+        }
+        [Fact]
+        public async void CheckHistoryText()
+        {
+            await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
+            const string key = "TranslationCutoffDate";
+            var cutoff = Manager.Instance.GetValue(key, DateTime.MinValue);
+            await Manager.Instance.CloudSync.PullTranslationsFromCloud(cutoff, 1, 1000, "en", "USERAPP_V1.0");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en");
+            mydevicemethod2();
+            var component = RenderComponent<StairAdaption>();
+            var mudStack = component.FindComponent<MudStack>();
+            var innerStack = mudStack.FindComponents<MudStack>()[4];
+            Assert.Equal(0, innerStack.Instance.Spacing);
+            var mudText = innerStack.FindComponent<MudText>();
+            Assert.Equal(Typo.h6, mudText.Instance.Typo);
+            mudText.MarkupMatches("<h6 class=\"mud-typography mud-typography-h6\">History</h6>");
         }
     }
 }
