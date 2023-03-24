@@ -7,6 +7,7 @@ using Moq;
 using MudBlazor;
 using Ossur.Bionics.Common;
 using Ossur.Bionics.Common.Maui.Services;
+using Ossur.Bionics.Common.Maui.Utils;
 using Plugin.BLE.Abstractions.Contracts;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -105,37 +106,36 @@ namespace BionicAppTestRunner.BionicAppUi
             mudText.MarkupMatches("<h6 class=\"mud-typography mud-typography-subtitle1\">Step 2/4</h6>");
         }
         [Fact]
-        public void checkrefreshButton() 
+        public async void checkrefreshButton() 
         {
+            await BleHelper.CheckAndRequestBluetoothPermission();
             var component = RenderComponent<Step2>();
             var MudIconButton = component.FindComponents<MudIconButton>()[1];
             Assert.Equal("refresh", MudIconButton.Instance.Class);
-            var MudProgessCircu= MudIconButton.FindComponent<MudProgressCircular>();
-            Assert.Equal("ms-n1",MudProgessCircu.Instance.Class);
+            var MudProgessCircu = MudIconButton.FindComponent<MudProgressCircular>();
+            Assert.Equal("ms-n1", MudProgessCircu.Instance.Class);
             Assert.Equal(MudBlazor.Size.Small, MudProgessCircu.Instance.Size);
             Assert.True(MudProgessCircu.Instance.Indeterminate);
             //var MudIcon = MudIconButton.FindComponent<MudIcon>();
-            //Assert.Equal("< path d =\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z\"/>", MudIcon.Instance.Icon);
+            //Assert.Equal("<path d =\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z\"/>", MudIcon.Instance.Icon);
         }
 
-        //[Fact]
-        //public async void checkpickdeviceText()
-        //{
-        //    await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
-        //    const string key = "TranslationCutoffDate";
-        //    var cutoff = Manager.Instance.GetValue(key, DateTime.MinValue);
-        //    await Manager.Instance.CloudSync.PullTranslationsFromCloud(cutoff, 1, 1000, "en", "USERAPP_V1.0");
-        //    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en");
-        //    string ErrorMessage = string.Empty;
-        //    if (string.IsNullOrEmpty(ErrorMessage))
-        //    {
-        //        var component = RenderComponent<Step2>();
-        //        ErrorMessage = string.Empty;
-        //        var mudText = component.FindComponents<MudText>()[2];
-        //        Assert.Equal(Typo.subtitle1, mudText.Instance.Typo);
-        //        mudText.MarkupMatches("<h6 class=\"mud-typography mud-typography-subtitle1\">Pick a device from list to pair</h5>");
-        //    }
-        //}
+        [Fact]
+        public async void checkpickdeviceText()
+        {
+            await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
+            const string key = "TranslationCutoffDate";
+            var cutoff = Manager.Instance.GetValue(key, DateTime.MinValue);
+            await Manager.Instance.CloudSync.PullTranslationsFromCloud(cutoff, 1, 1000, "en", "USERAPP_V1.0");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en");
+            var bluetoothConnection = new BluetoothConnection();
+            bluetoothConnection.Enable();
+            var component = RenderComponent<Step2>();
+            var mudText = component.FindComponents<MudText>()[2];
+            //Assert.Equal(Typo.subtitle1, mudText.Instance.Typo);
+            //mudText.MarkupMatches("<h6 class=\"mud-typography mud-typography-subtitle1\">Pick a device from list to pair</h5>");
+            
+        }
         // [Fact]
         //public async void checkforeach()
         //{

@@ -1,16 +1,13 @@
-﻿using Bunit;
+﻿using BionicApp.Services;
+using Bunit;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Ossur.Bionics.Common;
-using Xunit;
-using Microsoft.AspNetCore.Components;
 using Ossur.Bionics.Common.Models;
-using User = BionicApp.Pages.Add_Device.User;
-using System.Globalization;
-using BionicApp.Services;
-using System.Data.Common;
 using System.Data;
-using System.Collections.ObjectModel;
-using BionicApp.Data;
+using System.Globalization;
+using Xunit;
+using User = BionicApp.Pages.Add_Device.User;
 
 namespace BionicAppTestRunner.BionicAppUi
 {
@@ -22,6 +19,7 @@ namespace BionicAppTestRunner.BionicAppUi
             var component = RenderComponent<User>();
             var mudStack = component.FindComponent<MudStack>();
             Assert.Equal("ma-2 pa-3 stackLayout", mudStack.Instance.Class);
+
         }
         [Fact]
         public void checkNumberOfMudstack()
@@ -31,7 +29,7 @@ namespace BionicAppTestRunner.BionicAppUi
             var countStack = mudStack.FindComponents<MudStack>().Count();
             Assert.Equal(5, countStack);
         }
-        
+
         [Fact]
         public void check1stMudstackProperty()
         {
@@ -150,7 +148,7 @@ namespace BionicAppTestRunner.BionicAppUi
             var component = RenderComponent<User>();
             var mudfield = component.FindComponents<MudField>()[2];
             var mudtext = mudfield.FindComponent<MudText>();
-            mudtext.Find("p").MarkupMatches("<p class=\"mud-typography mud-typography-body2\">Admin</p>");
+            mudtext.Find("p").MarkupMatches("<p class=\"mud-typography mud-typography-body2\">Admin,LogicExpert,LogicUser</p>");
         }
 
         [Fact]
@@ -218,6 +216,11 @@ namespace BionicAppTestRunner.BionicAppUi
             await Manager.Instance.Login("https://bionicregistry40dev.azurewebsites.net/api/v1", "tst_admin@example.com", "tst_admin_42");
             var dataAdapter = new DataCollectionAdapter();
             var code = Manager.Instance.GetUserLanguageCode();
+            const string key = "TranslationCutoffDate";
+            var cutoff = Manager.Instance.GetValue(key, DateTime.MinValue);
+            await Manager.Instance.CloudSync.PullTranslationsFromCloud(cutoff, 1, 1000, "en", "USERAPP_V1.0");
+            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en");
+            var component = RenderComponent<User>();
             if (dataAdapter.SupportedLanguages.Any(a => a.Id.Equals(code)))
             {
                 selectedLanguage = dataAdapter.SupportedLanguages.Where(a => a.Id.Equals(code)).FirstOrDefault();
@@ -227,8 +230,8 @@ namespace BionicAppTestRunner.BionicAppUi
                 selectedLanguage = dataAdapter.SupportedLanguages.ToList().Find(a => a.Id.Equals("en"));
             }
             dataAdapter.SupportedLanguages = dataAdapter.SupportedLanguages.OrderBy(a => a.Name).ToList();
-    
-            var component = RenderComponent<User>();
+
+
             var mudStack = component.FindComponent<MudStack>();
             var secondStack = mudStack.FindComponents<MudStack>()[2];
             var mudStackinner = secondStack.FindComponents<MudStack>()[0];
@@ -237,9 +240,10 @@ namespace BionicAppTestRunner.BionicAppUi
             foreach (Language language in dataAdapter.SupportedLanguages)
             {
                 var selectItem = LanSelect.FindComponents<MudSelectItem<Language>>();
-                count ++;
+                count++;
             }
             Assert.Equal(19, count);
+            Assert.Equal("Chinese", dataAdapter.SupportedLanguages[0].Name);
         }
 
 
@@ -277,7 +281,7 @@ namespace BionicAppTestRunner.BionicAppUi
             var mudselect = mudStackinner.FindComponent<MudSelect<string>>();
             Assert.Equal(Variant.Outlined, mudselect.Instance.Variant);
             Assert.Equal(Origin.BottomCenter, mudselect.Instance.AnchorOrigin);
-            
+
         }
         [Fact]
         public void CheckMudSelectItem1()
@@ -324,6 +328,8 @@ namespace BionicAppTestRunner.BionicAppUi
             var buttonclick = button.Instance.OnClick;
             Assert.Equal("http://localhost/", nav.Uri);
         }
-        
+
+
+
     }
 }

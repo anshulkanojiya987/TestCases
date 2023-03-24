@@ -1,4 +1,4 @@
-using BionicApp.Pages.Add_Device.My_Devices.DeviceProfiles;
+﻿using BionicApp.Pages.Add_Device.My_Devices.DeviceProfiles;
 using BionicApp.Pages.Add_Device.My_Devices.DeviceSettings;
 using Bunit;
 using MudBlazor;
@@ -23,7 +23,7 @@ namespace BionicAppTestRunner.BionicAppUi
             var cutoff = Manager.Instance.GetValue(key, DateTime.MinValue);
             await Manager.Instance.CloudSync.PullTranslationsFromCloud(cutoff, 1, 1000, "en", "USERAPP_V1.0");
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en");
-            mydevicemethod2();
+            Mydevicemethod2();
             var component = RenderComponent<StairAdaption>();
             var mudStack = component.FindComponent<MudStack>();
             Assert.Equal(4, mudStack.Instance.Spacing);
@@ -41,7 +41,7 @@ namespace BionicAppTestRunner.BionicAppUi
         [Fact]
         public void CheckImage()
         {
-            mydevicemethod2();
+            Mydevicemethod2();
             var component = RenderComponent<StairAdaption>();
             var mudStack = component.FindComponent<MudStack>();
             var mudPaper = mudStack.FindComponent<MudPaper>();
@@ -60,7 +60,7 @@ namespace BionicAppTestRunner.BionicAppUi
             var cutoff = Manager.Instance.GetValue(key, DateTime.MinValue);
             await Manager.Instance.CloudSync.PullTranslationsFromCloud(cutoff, 1, 1000, "en", "USERAPP_V1.0");
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en");
-            mydevicemethod2();
+            Mydevicemethod2();
             var component = RenderComponent<StairAdaption>();
             var mudStack = component.FindComponent<MudStack>();
             var innerStack = mudStack.FindComponent<MudStack>();
@@ -93,14 +93,14 @@ namespace BionicAppTestRunner.BionicAppUi
             var cutoff = Manager.Instance.GetValue(key, DateTime.MinValue);
             await Manager.Instance.CloudSync.PullTranslationsFromCloud(cutoff, 1, 1000, "en", "USERAPP_V1.0");
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en");
-            mydevicemethod2();
+            Mydevicemethod2();
             var component = RenderComponent<StairAdaption>();
             var mudStack = component.FindComponent<MudStack>();
             var innerStack = mudStack.FindComponents<MudStack>()[2];
             Assert.Equal(1, innerStack.Instance.Spacing);
             var mudText = innerStack.FindComponent<MudText>();
             Assert.Equal(Typo.h6, mudText.Instance.Typo);
-            mudText.MarkupMatches("<h6 class=\"mud-typography mud-typography-h6\">Ascent Angle</h6>");
+            mudText.MarkupMatches("<h6 class=\"mud-typography mud-typography-h6\">[ascentangle_ua:en]</h6>");
             var Stackinner = innerStack.FindComponent<MudStack>();
             Assert.Equal(2, Stackinner.Instance.Spacing);
             Assert.Equal(Justify.SpaceBetween, Stackinner.Instance.Justify);
@@ -126,7 +126,7 @@ namespace BionicAppTestRunner.BionicAppUi
             var cutoff = Manager.Instance.GetValue(key, DateTime.MinValue);
             await Manager.Instance.CloudSync.PullTranslationsFromCloud(cutoff, 1, 1000, "en", "USERAPP_V1.0");
             CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en");
-            mydevicemethod2();
+            Mydevicemethod2();
             var component = RenderComponent<StairAdaption>();
             var mudStack = component.FindComponent<MudStack>();
             var innerStack = mudStack.FindComponents<MudStack>()[4];

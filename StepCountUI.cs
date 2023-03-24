@@ -15,7 +15,7 @@ namespace BionicAppTestRunner.BionicAppUi
         [Fact]
         public void CheckDisplayName()
         {
-            mydevicemethod2();
+            Mydevicemethod2();
             var component = RenderComponent<StepCount>();
             var mudtext = component.FindComponents<MudText>()[1];
             Assert.Equal(Typo.subtitle1, mudtext.Instance.Typo);
@@ -24,7 +24,7 @@ namespace BionicAppTestRunner.BionicAppUi
         [Fact]
         public void CheckModelName()
         {
-            mydevicemethod2();
+            Mydevicemethod2();
             var component = RenderComponent<StepCount>();
             var mudtext = component.FindComponents<MudText>()[2];
             Assert.Equal(Typo.caption, mudtext.Instance.Typo);
@@ -33,7 +33,7 @@ namespace BionicAppTestRunner.BionicAppUi
         [Fact]
         public void CheckstepCountText()
         {
-            mydevicemethod2();
+            Mydevicemethod2();
             var component = RenderComponent<StepCount>();
             var mudpaper = component.FindComponent<MudPaper>();
             Assert.Equal("mx-auto pa-12 rounded-circle", mudpaper.Instance.Class);
